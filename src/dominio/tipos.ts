@@ -2,18 +2,26 @@
 
 export type StatusPedido = 'recebido' | 'preparo' | 'pronto' | 'retirado'
 
+/** Papel da categoria num combo do intervalo. */
+export type TipoCategoria = 'principal' | 'bebida' | 'sobremesa'
+
 export type ItemCardapio = {
   id: string
   nome: string
   preco: number
-  categoria: string
+  /** Minutos estimados para o item sair do balcão. */
+  tempoPreparo: number
+  leve?: boolean
   descricao?: string
+  categoria: string
+  tipo: TipoCategoria
 }
 
 export type Categoria = {
   nome: string
+  tipo: TipoCategoria
   emoji: string
-  itens: Omit<ItemCardapio, 'categoria'>[]
+  itens: Omit<ItemCardapio, 'categoria' | 'tipo'>[]
 }
 
 export type Destaque = { id: string; rotulo: string }

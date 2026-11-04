@@ -3,6 +3,7 @@ import { estaNaFila } from '../dominio/pedido'
 import type { Pedido, StatusPedido } from '../dominio/tipos'
 import { useServicos } from '../hooks/contexto'
 import { confirmar } from '../hooks/navegador'
+import { useAnuncioBalcao } from '../hooks/useAnuncioBalcao'
 
 const COLUNAS: { status: StatusPedido; titulo: string; acao: string }[] = [
   { status: 'recebido', titulo: 'Recebidos', acao: 'Iniciar preparo' },
@@ -12,6 +13,7 @@ const COLUNAS: { status: StatusPedido; titulo: string; acao: string }[] = [
 
 export function TelaBalcao({ pedidos }: { pedidos: Pedido[] }) {
   const { pedidos: servico } = useServicos()
+  const voz = useAnuncioBalcao(pedidos)
   const naFila = pedidos.filter(estaNaFila).length
   const entregues = pedidos.filter((p) => p.status === 'retirado').length
   const faturamento = pedidos.reduce((soma, p) => soma + p.total, 0)
@@ -29,9 +31,16 @@ export function TelaBalcao({ pedidos }: { pedidos: Pedido[] }) {
             {naFila} na fila · {entregues} entregues · {formatarPreco(faturamento)} hoje
           </p>
         </div>
-        <button className="botao contorno" onClick={zerarDia}>
-          Zerar dia
-        </button>
+        <div className="balcao-acoes">
+          {voz.disponivel && (
+            <button className="botao contorno" aria-pressed={voz.vozLigada} onClick={voz.alternarVoz}>
+              {voz.vozLigada ? '🔊 Voz ligada' : '🔇 Voz desligada'}
+            </button>
+          )}
+          <button className="botao contorno" onClick={zerarDia}>
+            Zerar dia
+          </button>
+        </div>
       </section>
       <div className="kanban">
         {COLUNAS.map((col) => {
@@ -58,6 +67,11 @@ export function TelaBalcao({ pedidos }: { pedidos: Pedido[] }) {
                   <p className="suave pequeno">
                     {p.retirada} · {p.pagamento} · {formatarPreco(p.total)}
                   </p>
+                  {p.status === 'pronto' && voz.disponivel && (
+                    <button className="botao contorno cheio" onClick={() => voz.chamarDeNovo(p)}>
+                      📢 Chamar de novo
+                    </button>
+                  )}
                   <button className="botao primario cheio" onClick={() => servico.avancarStatus(p.senha)}>
                     {col.acao}
                   </button>

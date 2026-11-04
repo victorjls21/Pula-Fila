@@ -51,6 +51,10 @@ export default function App() {
         pedidos={pedidos}
         aoAcompanhar={() => navegacao.irPara('senha')}
         aoAbrirCarrinho={abrirCarrinho}
+        aoEscolherCombo={(combo) => {
+          carrinho.adicionarVarios(combo.itens.map((i) => i.id))
+          abrirCarrinho()
+        }}
       />
     )
   }

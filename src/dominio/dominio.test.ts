@@ -62,6 +62,13 @@ describe('cardápio', () => {
     expect(filtrarItens('', 'Bebidas').every((i) => i.categoria === 'Bebidas')).toBe(true)
   })
 
+  it('todo item tem tipo válido e tempo de preparo positivo', () => {
+    for (const item of todosItens) {
+      expect(['principal', 'bebida', 'sobremesa']).toContain(item.tipo)
+      expect(item.tempoPreparo).toBeGreaterThan(0)
+    }
+  })
+
   it('emoji e destaques vêm do JSON', () => {
     expect(emojiDaCategoria('Croissant')).toBe('🥐')
     expect(emojiDaCategoria('Inexistente')).toBe('🍽️')

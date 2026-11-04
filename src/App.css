@@ -1129,3 +1129,123 @@
 .ticket p {
   margin: 0 0 6px;
 }
+
+/* Monte seu combo do intervalo */
+.combo-intro {
+  max-width: 560px;
+  margin: -16px auto 24px;
+  text-align: center;
+  color: var(--cor-suave);
+}
+
+.combo-filtros {
+  display: grid;
+  gap: 12px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.combo-filtro {
+  display: grid;
+  gap: 6px;
+}
+
+@media (min-width: 760px) {
+  .combo-filtro {
+    grid-template-columns: 96px 1fr;
+    align-items: center;
+  }
+}
+
+.combo-filtro-titulo {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--cor-suave);
+}
+
+.combo-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+@media (min-width: 760px) {
+  .combo-chips {
+    flex-wrap: wrap;
+  }
+}
+
+.combo-nota {
+  max-width: 1040px;
+  margin: 14px auto 20px;
+  text-align: center;
+}
+
+.combo-grade {
+  display: grid;
+  gap: 16px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .combo-grade {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 336px));
+    justify-content: center;
+  }
+}
+
+.combo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: var(--cor-card);
+  border-radius: var(--raio-card);
+}
+
+.combo-chamada {
+  align-self: flex-start;
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 16px 16px 16px 4px;
+  background: var(--cor-etiqueta);
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.combo-itens {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.combo-itens li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--cor-contorno);
+}
+
+.combo-itens li:last-child {
+  border-bottom: none;
+}
+
+.combo-card .botao.cheio {
+  margin-top: 0;
+}
+
+/* Balcão que fala */
+.balcao-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

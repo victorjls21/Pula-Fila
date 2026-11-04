@@ -6,6 +6,7 @@ export type CarrinhoHook = {
   itens: Carrinho
   resumo: ResumoCarrinho
   adicionar: (id: string) => void
+  adicionarVarios: (ids: string[]) => void
   remover: (id: string) => void
   esvaziar: () => void
 }
@@ -17,6 +18,7 @@ export function useCarrinho(): CarrinhoHook {
     itens,
     resumo,
     adicionar: (id) => setItens((c) => adicionarItem(c, id)),
+    adicionarVarios: (ids) => setItens((c) => ids.reduce(adicionarItem, c)),
     remover: (id) => setItens((c) => removerItem(c, id)),
     esvaziar: () => setItens({}),
   }

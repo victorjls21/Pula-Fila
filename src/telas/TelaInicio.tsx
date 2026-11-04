@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Foto } from '../componentes/Foto'
+import { MonteSeuCombo } from '../componentes/MonteSeuCombo'
 import { BotaoQuantidade } from '../componentes/Quantidade'
 import { buscarItem, categorias, destaques, filtrarItens, maisPedidos } from '../dominio/cardapio'
 import { formatarPreco } from '../dominio/dinheiro'
@@ -7,6 +8,7 @@ import { estaNaFila } from '../dominio/pedido'
 import type { ItemCardapio, Pedido } from '../dominio/tipos'
 import type { CarrinhoHook } from '../hooks/useCarrinho'
 import type { Navegacao } from '../hooks/useNavegacao'
+import type { Combo } from '../sugestao'
 
 type Props = {
   carrinho: CarrinhoHook
@@ -15,9 +17,10 @@ type Props = {
   pedidos: Pedido[]
   aoAcompanhar: () => void
   aoAbrirCarrinho: () => void
+  aoEscolherCombo: (combo: Combo) => void
 }
 
-export function TelaInicio({ carrinho, navegacao, meuPedido, pedidos, aoAcompanhar, aoAbrirCarrinho }: Props) {
+export function TelaInicio({ carrinho, navegacao, meuPedido, pedidos, aoAcompanhar, aoAbrirCarrinho, aoEscolherCombo }: Props) {
   const { busca, categoria } = navegacao
   const itensVisiveis = filtrarItens(busca, categoria)
   const naFila = pedidos.filter(estaNaFila).length
@@ -40,6 +43,8 @@ export function TelaInicio({ carrinho, navegacao, meuPedido, pedidos, aoAcompanh
           <span>Acompanhar →</span>
         </button>
       )}
+
+      <MonteSeuCombo naFila={naFila} aoEscolher={aoEscolherCombo} />
 
       <section className="vitrine">
         <h2 className="titulo-secao">Mais pedidos</h2>

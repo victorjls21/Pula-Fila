@@ -3,11 +3,12 @@ import type { Categoria, Destaque, ItemCardapio } from './tipos'
 
 type ArquivoCardapio = { categorias: Categoria[]; destaques: Destaque[]; maisPedidos: string[] }
 
-const arquivo: ArquivoCardapio = dados
+// O JSON infere `tipo` como string; os testes de domínio conferem que todo valor é um TipoCategoria válido.
+const arquivo = dados as ArquivoCardapio
 
 export const categorias: Categoria[] = arquivo.categorias
 
-export const todosItens: ItemCardapio[] = categorias.flatMap((c) => c.itens.map((i) => ({ ...i, categoria: c.nome })))
+export const todosItens: ItemCardapio[] = categorias.flatMap((c) => c.itens.map((i) => ({ ...i, categoria: c.nome, tipo: c.tipo })))
 
 export const destaques: Destaque[] = arquivo.destaques
 
