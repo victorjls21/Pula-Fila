@@ -6,8 +6,9 @@
 import { execFileSync } from 'node:child_process'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const raiz = new URL('..', import.meta.url).pathname
+const raiz = fileURLToPath(new URL('..', import.meta.url))
 const config = join(raiz, 'metricas/oxlint-metricas.json')
 const ehCodigo = (f) => /\.(ts|tsx)$/.test(f) && !/\.test\.tsx?$/.test(f) && !f.endsWith('.d.ts')
 
