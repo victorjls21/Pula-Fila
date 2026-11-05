@@ -12,6 +12,7 @@ Web-app para acabar com a fila da cantina da CESAR School (Imperial Padaria). O 
 - Tela do balcão: Recebidos → Em preparo → Prontos → Entregue
 - Aviso de "pedido pronto" no celular do aluno, em tempo real
 - **Monte seu combo do intervalo**: o aluno diz quanto tem no bolso e em quanto tempo precisa do lanche, e o app sugere combos como "R$ 14,50 e pronto em 2 min"
+- **Rachar pedido com colegas**: na tela "Seu pedido", o grupo escolhe dividir igualmente ou por item que cada colega pediu (Strategy), e no pagamento cada colega escolhe seu próprio meio (Pix ou Cartão) e paga sua parte
 - **Balcão que fala**: quando um pedido fica pronto, o painel anuncia em voz alta "Senha A 42, Tales! Coxinha de frango e Suco Recife saindo!"
 
 ## Como rodar
@@ -30,12 +31,13 @@ Abra `http://localhost:5173` (aluno) e, **em outra aba**, `http://localhost:5173
 src/
 ├── dominio/       regras puras, sem React: tipos, pedido (transições de status), carrinho, cardápio, horários
 ├── pagamento/     Strategy: interface MeioPagamento + Pix + Cartao
+├── divisao/       Strategy: interface EstrategiaDivisao + DivisaoIgualitaria + DivisaoPorItem
 ├── repositorio/   interface PedidoRepositorio/SessaoCliente + implementações localStorage e memória
 ├── sugestao/      Strategy: interface EstrategiaSugestao + 4 estratégias de combo + geração e filtro de combos
 ├── voz/           texto do anúncio (puro) + interface Anunciador com a voz do navegador
 ├── servicos/      PedidoService (finalizar, avançar status, zerar dia) + criarServicos (raiz de composição)
-├── hooks/         usePedidos, useCarrinho, useCheckout, useMeuPedido, useNavegacao, useCombos, useAnuncioBalcao
-├── componentes/   Cabecalho, Foto, BotaoQuantidade, MonteSeuCombo
+├── hooks/         usePedidos, useCarrinho, useCheckout, useDivisao, useMeuPedido, useNavegacao, useCombos, useAnuncioBalcao
+├── componentes/   Cabecalho, Foto, BotaoQuantidade, MonteSeuCombo, RacharPedido, PagamentoRachado
 ├── telas/         TelaInicio, TelaCarrinho, TelaPagamento, TelaSenha, TelaBalcao
 └── App.tsx        só escolhe a tela e liga os hooks
 ```
@@ -62,6 +64,13 @@ Quando um pedido passa para **Pronto**, a tela do balcão anuncia com a síntese
 - A senha é falada como "A 42", não "A menos zero quarenta e dois".
 
 > Os navegadores só liberam a voz depois de alguma interação com a página. Clique uma vez em qualquer lugar da aba do balcão (por exemplo, no botão de voz) quando abrir o turno.
+
+### 3. Rachar pedido com colegas
+Na tela **Seu pedido**, o grupo pode ativar **👥 Rachar com colegas** (de 2 a 6 pessoas) e escolher como dividir a conta:
+- **A regra de divisão é uma Strategy (`EstrategiaDivisao`, `src/divisao/EstrategiaDivisao.ts`).** Existem duas estratégias prontas em `src/divisao/estrategias.ts`:
+  - `DivisaoIgualitaria` (**🤝 Igual pra todos**): divide em centavos inteiros e distribui eventual resto de centavos sem perder nem criar dinheiro.
+  - `DivisaoPorItem` (**🥐 Cada um paga o seu**): desmembra itens com quantidade > 1 em unidades individuais e permite marcar quem pediu cada item.
+- **Pagamento individual por colega**: na tela **Pagamento**, cada participante tem a sua vez, escolhe seu próprio meio (`Pix` ou `Cartão`), valida seus dados separadamente e o pedido registra a cota e o meio de cada um no comprovante.
 
 ## Decisões de stack
 - **React + TypeScript + Vite**: setup em segundos, e o TypeScript deixa tipos e interfaces explícitos.
@@ -126,6 +135,7 @@ Leitura dos números:
 - `servicos/PedidoService.test.ts`: finalizar (sucesso, senhas em sequência, cada erro de validação), transições do balcão, zerar dia.
 - `dominio/dominio.test.ts`: carrinho, regras do pedido, cardápio (inclusive `tipo` e `tempoPreparo` válidos em todo item) e horários de retirada.
 - `sugestao/sugestao.test.ts`: geração de combos, preço em centavos, tempo com fila, o exemplo "R$ 15 e pronto em 5 min", cada estratégia, e uma estratégia nova plugada sem mudar o código existente.
+- `divisao/divisao.test.ts`: divisão igualitária (incluindo distribuição exata de centavos), divisão por item (desmembrando unidades), e uma estratégia nova plugada sem alterar código existente (Aberto/Fechado).
 - `voz/voz.test.ts`: texto do anúncio (senha falada, primeiro nome, até dois itens) e a detecção de quem acabou de ficar pronto, inclusive depois de "Zerar dia".
 
 ### Dívidas que continuam

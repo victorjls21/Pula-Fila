@@ -1249,3 +1249,127 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* Rachar pedido com colegas */
+.racha-box {
+  background: var(--cor-card);
+  border-radius: var(--raio-card);
+  padding: 16px;
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.racha-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.racha-corpo {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--cor-contorno);
+  display: grid;
+  gap: 12px;
+}
+
+.racha-corpo > p {
+  margin: -4px 0 0;
+}
+
+.racha-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip.pequeno {
+  padding: 5px 11px;
+  font-size: 12px;
+}
+
+.chip.pago:not(.ativo) {
+  border-color: var(--cor-ok);
+  color: var(--cor-ok);
+}
+
+.racha-colegas {
+  display: grid;
+  gap: 8px;
+}
+
+.racha-colega {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.racha-colega input {
+  padding: 10px 12px;
+  border: 1px solid var(--cor-contorno);
+  border-radius: var(--raio-botao);
+  background: #fff;
+  width: 100%;
+  min-width: 0;
+}
+
+.racha-remover {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--cor-contorno);
+  background: var(--cor-painel);
+  color: var(--cor-suave);
+  font-weight: 700;
+}
+
+.racha-itens {
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--cor-contorno);
+}
+
+.racha-itens > p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.racha-item-linha {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--cor-painel);
+  font-size: 13px;
+}
+
+.racha-pagamento {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+  border-radius: var(--raio-card);
+  background: var(--cor-card);
+  text-align: left;
+}
+
+.racha-pagamento > p {
+  margin: 0;
+}
+
+.racha-vez {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 14px;
+}
+

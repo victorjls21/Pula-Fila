@@ -1,8 +1,16 @@
 import { resumirCarrinho } from '../dominio/carrinho'
+import { paraCentavos } from '../dominio/dinheiro'
 import { avancar, formatarSenha } from '../dominio/pedido'
-import type { Carrinho, Pedido } from '../dominio/tipos'
+import type { Carrinho, CotaPaga, Pedido } from '../dominio/tipos'
 import type { DadosPagamento, MeioPagamento } from '../pagamento'
 import type { Cancelar, PedidoRepositorio } from '../repositorio/PedidoRepositorio'
+
+export type PagamentoCota = {
+  nome: string
+  valor: number
+  meioPagamentoId: string
+  dadosPagamento: DadosPagamento
+}
 
 export type NovoPedido = {
   cliente: string
@@ -10,6 +18,7 @@ export type NovoPedido = {
   retirada: string
   meioPagamentoId: string
   dadosPagamento: DadosPagamento
+  pagamentos?: PagamentoCota[]
 }
 
 export type ResultadoPedido = { ok: true; pedido: Pedido } | { ok: false; erro: string }
@@ -23,6 +32,10 @@ type Opcoes = {
 }
 
 const esperar = (ms: number) => () => new Promise<void>((resolver) => setTimeout(resolver, ms))
+
+function descreverDivisao(divisao: CotaPaga[]): string {
+  return `Rachado (${divisao.length}): ` + divisao.map((d) => `${d.nome} (${d.pagamento})`).join(' · ')
+}
 
 /** Regras do pedido: validar, cobrar, numerar, gravar e andar no fluxo do balcão. */
 export class PedidoService {
@@ -66,24 +79,60 @@ export class PedidoService {
 
   private validar(novo: NovoPedido): string | null {
     if (!novo.cliente.trim()) return ERRO_SEM_NOME
-    if (resumirCarrinho(novo.carrinho).quantidade === 0) return 'Seu carrinho está vazio.'
-    const meio = this.meio(novo.meioPagamentoId)
-    if (!meio) return 'Meio de pagamento desconhecido.'
-    return meio.validar(novo.dadosPagamento)
+    const { quantidade, total } = resumirCarrinho(novo.carrinho)
+    if (quantidade === 0) return 'Seu carrinho está vazio.'
+    if (novo.pagamentos?.length) return this.validarDivisao(novo.pagamentos, total)
+    return this.validarMeio(novo.meioPagamentoId, novo.dadosPagamento)
+  }
+
+  private validarMeio(id: string, dados: DadosPagamento): string | null {
+    const meio = this.meio(id)
+    return meio ? meio.validar(dados) : 'Meio de pagamento desconhecido.'
+  }
+
+  private validarDivisao(cotas: PagamentoCota[], total: number): string | null {
+    if (cotas.some((c) => c.valor <= 0)) return 'Cada colega no racha precisa ter valor maior que zero.'
+    const soma = cotas.reduce((s, c) => s + paraCentavos(c.valor), 0)
+    if (soma !== paraCentavos(total)) return 'A soma das partes não bate com o total do pedido.'
+    return this.validarCotasMeio(cotas)
+  }
+
+  private validarCotasMeio(cotas: PagamentoCota[]): string | null {
+    for (const c of cotas) {
+      const erro = this.validarMeio(c.meioPagamentoId, c.dadosPagamento)
+      if (erro) return `${c.nome}: ${erro}`
+    }
+    return null
   }
 
   private montarPedido(novo: NovoPedido): Pedido {
     const { itens, total } = resumirCarrinho(novo.carrinho)
+    const divisao = this.montarDivisao(novo.pagamentos)
+    const pagamento = divisao ? descreverDivisao(divisao) : this.descreverMeio(novo.meioPagamentoId, novo.dadosPagamento)
     return {
       senha: formatarSenha(this.repositorio.proximoNumeroSenha()),
       cliente: novo.cliente.trim(),
       itens,
       total,
-      pagamento: this.meio(novo.meioPagamentoId)!.descrever(novo.dadosPagamento),
+      pagamento,
+      ...(divisao ? { divisao } : {}),
       retirada: novo.retirada,
       status: 'recebido',
       criadoEm: this.agora(),
     }
+  }
+
+  private montarDivisao(cotas?: PagamentoCota[]): CotaPaga[] | undefined {
+    if (!cotas || cotas.length <= 1) return undefined
+    return cotas.map((c) => ({
+      nome: c.nome.trim(),
+      valor: c.valor,
+      pagamento: this.descreverMeio(c.meioPagamentoId, c.dadosPagamento),
+    }))
+  }
+
+  private descreverMeio(id: string, dados: DadosPagamento): string {
+    return this.meio(id)!.descrever(dados)
   }
 
   private meio(id: string): MeioPagamento | undefined {

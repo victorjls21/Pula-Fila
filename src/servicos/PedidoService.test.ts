@@ -85,6 +85,50 @@ describe('PedidoService.finalizarPedido', () => {
     await servico.finalizarPedido(pedidoPix())
     expect(cobrancas).toBe(1)
   })
+
+  it('finaliza pedido rachado permitindo que cada colega escolha seu próprio meio de pagamento', async () => {
+    const { servico } = criar()
+    const resultado = await servico.finalizarPedido(
+      pedidoPix({
+        cliente: 'Ana',
+        pagamentos: [
+          { nome: 'Ana', valor: 15.75, meioPagamentoId: 'pix', dadosPagamento: {} },
+          { nome: 'Lucas', valor: 15.75, meioPagamentoId: 'cartao', dadosPagamento: cartaoValido },
+        ],
+      }),
+    )
+    expect(resultado.ok).toBe(true)
+    if (resultado.ok) {
+      expect(resultado.pedido.pagamento).toBe('Rachado (2): Ana (Pix) · Lucas (Cartão final 1234)')
+      expect(resultado.pedido.divisao).toEqual([
+        { nome: 'Ana', valor: 15.75, pagamento: 'Pix' },
+        { nome: 'Lucas', valor: 15.75, pagamento: 'Cartão final 1234' },
+      ])
+    }
+  })
+
+  it('recusa pedido rachado quando um colega tem cartão inválido ou a soma não bate', async () => {
+    const { servico } = criar()
+    const cartaoRuim = await servico.finalizarPedido(
+      pedidoPix({
+        pagamentos: [
+          { nome: 'Ana', valor: 15.75, meioPagamentoId: 'pix', dadosPagamento: {} },
+          { nome: 'Lucas', valor: 15.75, meioPagamentoId: 'cartao', dadosPagamento: { ...cartaoValido, cvv: '1' } },
+        ],
+      }),
+    )
+    expect(cartaoRuim).toEqual({ ok: false, erro: 'Lucas: CVV precisa ter 3 dígitos.' })
+
+    const somaErrada = await servico.finalizarPedido(
+      pedidoPix({
+        pagamentos: [
+          { nome: 'Ana', valor: 10, meioPagamentoId: 'pix', dadosPagamento: {} },
+          { nome: 'Lucas', valor: 10, meioPagamentoId: 'pix', dadosPagamento: {} },
+        ],
+      }),
+    )
+    expect(somaErrada).toEqual({ ok: false, erro: 'A soma das partes não bate com o total do pedido.' })
+  })
 })
 
 describe('PedidoService no balcão', () => {

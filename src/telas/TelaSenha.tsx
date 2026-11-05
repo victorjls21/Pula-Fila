@@ -42,6 +42,18 @@ export function TelaSenha({ pedido, pedidos, aoFazerOutro }: Props) {
             <span>{formatarPreco(pedido.total)}</span>
           </li>
         </ul>
+        {pedido.divisao && (
+          <ul className="resumo">
+            {pedido.divisao.map((c, idx) => (
+              <li key={idx}>
+                <span>
+                  👥 {c.nome} <small className="suave">({c.pagamento})</small>
+                </span>
+                <span>{formatarPreco(c.valor)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
         <button className="botao contorno" onClick={aoFazerOutro}>
           Fazer outro pedido
         </button>

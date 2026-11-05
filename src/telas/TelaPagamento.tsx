@@ -1,11 +1,13 @@
-import { formatarPreco } from '../dominio/dinheiro'
+import { BotaoConfirmarPagamento, PainelPagadoresRacha } from '../componentes/PagamentoRachado'
+import type { ItemPedido } from '../dominio/tipos'
 import type { CheckoutHook } from '../hooks/useCheckout'
 import type { CampoPagamento } from '../pagamento'
 
-type Props = { checkout: CheckoutHook; total: number; aoVoltar: () => void; aoPagar: () => void }
+type Props = { checkout: CheckoutHook; itens: ItemPedido[]; total: number; aoVoltar: () => void; aoPagar: () => void }
 
-export function TelaPagamento({ checkout, total, aoVoltar, aoPagar }: Props) {
+export function TelaPagamento({ checkout, itens, total, aoVoltar, aoPagar }: Props) {
   const { meio, meios } = checkout
+  const cotas = checkout.divisao.cotasDe(itens, checkout.nome)
 
   function campo(c: CampoPagamento) {
     return (
@@ -27,6 +29,7 @@ export function TelaPagamento({ checkout, total, aoVoltar, aoPagar }: Props) {
         ← Carrinho
       </button>
       <h1 className="display">Pagamento</h1>
+      <PainelPagadoresRacha checkout={checkout} cotas={cotas} />
       <div className="metodos">
         {meios.map((m) => (
           <label key={m.id} className={'metodo' + (m.id === meio.id ? ' selecionado' : '')}>
@@ -55,9 +58,7 @@ export function TelaPagamento({ checkout, total, aoVoltar, aoPagar }: Props) {
         </div>
       )}
       {checkout.erro && <p className="erro">{checkout.erro}</p>}
-      <button className="botao primario cheio" disabled={checkout.processando} onClick={aoPagar}>
-        {checkout.processando ? 'Processando…' : 'Pagar ' + formatarPreco(total)}
-      </button>
+      <BotaoConfirmarPagamento checkout={checkout} total={total} cotas={cotas} aoPagar={aoPagar} />
     </section>
   )
 }

@@ -38,7 +38,7 @@ export default function App() {
       return <TelaSenha pedido={meu.pedido} pedidos={pedidos} aoFazerOutro={() => navegacao.irPara('cardapio')} />
     }
     if (navegacao.tela === 'pagamento') {
-      return <TelaPagamento checkout={checkout} total={carrinho.resumo.total} aoVoltar={abrirCarrinho} aoPagar={pagar} />
+      return <TelaPagamento checkout={checkout} itens={carrinho.resumo.itens} total={carrinho.resumo.total} aoVoltar={abrirCarrinho} aoPagar={pagar} />
     }
     if (navegacao.tela === 'carrinho') {
       return <TelaCarrinho carrinho={carrinho} checkout={checkout} aoVoltar={() => navegacao.irPara('cardapio')} aoContinuar={() => navegacao.irPara('pagamento')} />

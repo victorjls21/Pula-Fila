@@ -28,12 +28,15 @@ export type Destaque = { id: string; rotulo: string }
 
 export type ItemPedido = { id: string; nome: string; preco: number; qtd: number }
 
+export type CotaPaga = { nome: string; valor: number; pagamento: string }
+
 export type Pedido = {
   senha: string
   cliente: string
   itens: ItemPedido[]
   total: number
   pagamento: string
+  divisao?: CotaPaga[]
   retirada: string
   status: StatusPedido
   criadoEm: number

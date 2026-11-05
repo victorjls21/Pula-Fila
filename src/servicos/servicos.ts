@@ -1,3 +1,4 @@
+import { estrategiasDivisao, type EstrategiaDivisao } from '../divisao'
 import { meiosPagamento, type MeioPagamento } from '../pagamento'
 import { LocalStoragePedidoRepositorio, LocalStorageSessaoCliente } from '../repositorio/LocalStoragePedidoRepositorio'
 import type { PedidoRepositorio, SessaoCliente } from '../repositorio/PedidoRepositorio'
@@ -10,6 +11,7 @@ export type Servicos = {
   sessao: SessaoCliente
   meiosPagamento: MeioPagamento[]
   estrategiasSugestao: EstrategiaSugestao[]
+  estrategiasDivisao: EstrategiaDivisao[]
   anunciador: Anunciador
 }
 
@@ -19,5 +21,12 @@ export function criarServicos(
   sessao: SessaoCliente = new LocalStorageSessaoCliente(window.localStorage),
   anunciador: Anunciador = new VozDoNavegador(),
 ): Servicos {
-  return { pedidos: new PedidoService(repositorio, meiosPagamento), sessao, meiosPagamento, estrategiasSugestao, anunciador }
+  return {
+    pedidos: new PedidoService(repositorio, meiosPagamento),
+    sessao,
+    meiosPagamento,
+    estrategiasSugestao,
+    estrategiasDivisao,
+    anunciador,
+  }
 }

@@ -1,4 +1,5 @@
 import { Passo } from '../componentes/Quantidade'
+import { RacharPedido } from '../componentes/RacharPedido'
 import { buscarItem, emojiDaCategoria } from '../dominio/cardapio'
 import { formatarPreco } from '../dominio/dinheiro'
 import type { CarrinhoHook } from '../hooks/useCarrinho'
@@ -10,7 +11,7 @@ export function TelaCarrinho({ carrinho, checkout, aoVoltar, aoContinuar }: Prop
   const { resumo } = carrinho
 
   function continuar() {
-    if (checkout.conferirNome()) aoContinuar()
+    if (checkout.conferirNome(resumo.itens)) aoContinuar()
   }
 
   return (
@@ -50,6 +51,12 @@ export function TelaCarrinho({ carrinho, checkout, aoVoltar, aoContinuar }: Prop
           </select>
         </label>
       </div>
+      <RacharPedido
+        itens={resumo.itens}
+        nomePrincipal={checkout.nome}
+        aoMudarNomePrincipal={checkout.setNome}
+        divisao={checkout.divisao}
+      />
       {checkout.erro && <p className="erro">{checkout.erro}</p>}
       <button className="botao primario cheio" disabled={resumo.quantidade === 0} onClick={continuar}>
         Ir para o pagamento
