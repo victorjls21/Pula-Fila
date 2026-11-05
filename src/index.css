@@ -18,14 +18,16 @@
   --fonte-display: 'Fraunces', Georgia, serif;
   --fonte-texto: 'DM Sans', system-ui, -apple-system, sans-serif;
 
-  --raio-painel: 36px;
-  --raio-card: 26px;
-  --raio-botao: 14px;
+  --raio-painel: clamp(1.5rem, 4vw, 2.25rem);
+  --raio-card: clamp(1.125rem, 3vw, 1.625rem);
+  --raio-botao: 0.875rem;
 
   font-family: var(--fonte-texto);
+  font-size: 100%;
   color: var(--cor-tinta);
   background: var(--cor-pagina);
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
 }
 
 * {
@@ -35,7 +37,11 @@
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
+  font-size: 1rem;
+  line-height: 1.45;
   background: var(--cor-pagina);
+  overflow-x: hidden;
 }
 
 button,
@@ -43,6 +49,7 @@ input,
 select {
   font: inherit;
   color: inherit;
+  touch-action: manipulation;
 }
 
 button {
