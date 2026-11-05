@@ -81,7 +81,15 @@ Na tela **Seu pedido**, o grupo pode ativar **👥 Rachar com colegas** (de 2 a 
 ## Integrantes
 | Nome | Papel |
 |---|---|
-| _preencher_ | _preencher_ |
+| Beatriz de Melo | Scrum Master |
+| Carlos Eduardo | Engenheiro de Software |
+| Luisa Couto | QA |
+| João Tezolini | Product Owner |
+| Maria Vitória | QA |
+| Otávio Leão | Desenvolvedor |
+| Tales Cavalcanti | Desenvolvedor |
+| Victor Julius | Desenvolvedor |
+
 
 ## Princípios do cap. 5: antes e depois
 
