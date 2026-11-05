@@ -4,6 +4,7 @@ import { useCheckout } from './hooks/useCheckout'
 import { useMeuPedido } from './hooks/useMeuPedido'
 import { useNavegacao } from './hooks/useNavegacao'
 import { usePedidos } from './hooks/usePedidos'
+import type { Combo } from './sugestao'
 import { TelaBalcao } from './telas/TelaBalcao'
 import { TelaCarrinho } from './telas/TelaCarrinho'
 import { TelaInicio } from './telas/TelaInicio'
@@ -22,6 +23,13 @@ export default function App() {
   function abrirCarrinho() {
     checkout.atualizarHorarios()
     navegacao.irPara('carrinho')
+  }
+
+  function escolherCombo(combo: Combo) {
+    const qtd = combo.pessoas ?? 1
+    carrinho.adicionarVarios(combo.itens.flatMap((i) => Array<string>(qtd).fill(i.id)))
+    if (qtd > 1) checkout.divisao.ativarParaGrupo(qtd, checkout.nome)
+    abrirCarrinho()
   }
 
   async function pagar() {
@@ -51,10 +59,7 @@ export default function App() {
         pedidos={pedidos}
         aoAcompanhar={() => navegacao.irPara('senha')}
         aoAbrirCarrinho={abrirCarrinho}
-        aoEscolherCombo={(combo) => {
-          carrinho.adicionarVarios(combo.itens.map((i) => i.id))
-          abrirCarrinho()
-        }}
+        aoEscolherCombo={escolherCombo}
       />
     )
   }

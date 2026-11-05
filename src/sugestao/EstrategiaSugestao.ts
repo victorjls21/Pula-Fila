@@ -7,6 +7,8 @@ export type Combo = {
   preco: number
   /** Minutos estimados até ficar pronto, já contando a fila atual. */
   minutos: number
+  /** Quantas pessoas dividem o combo (padrão: 1). */
+  pessoas?: number
 }
 
 export type Restricoes = {
@@ -20,6 +22,8 @@ export interface EstrategiaSugestao {
   readonly id: string
   readonly nome: string
   readonly descricao: string
+  /** Quantas pessoas dividem o combo sugerido (padrão: 1). */
+  readonly pessoas?: number
   aceita(combo: Combo): boolean
   /** Negativo quando `a` deve aparecer antes de `b`. */
   comparar(a: Combo, b: Combo): number

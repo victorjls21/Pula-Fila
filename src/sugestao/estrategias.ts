@@ -58,3 +58,28 @@ export class Leve implements EstrategiaSugestao {
     return maisBarato(a, b) || maisRapido(a, b)
   }
 }
+
+const PESO_GALERA: Record<string, number> = {
+  'coxinha-frango': 3,
+  'enroladinho-salsicha': 2,
+  'empada-frango-requeijao': 2,
+  'refrigerante-lata': 2,
+  'brownie-vo-carminha': 2,
+}
+
+const pontosGalera = (c: Combo) => c.itens.reduce((soma, i) => soma + (PESO_GALERA[i.id] ?? 0), 0)
+
+export class DividaComAmigos implements EstrategiaSugestao {
+  readonly id = 'amigos'
+  readonly nome = '👥 Divida com amigos'
+  readonly descricao = 'Combo triplo pra 3 amigos (3 de cada item), já pronto pra rachar a conta.'
+  readonly pessoas = 3
+
+  aceita(): boolean {
+    return true
+  }
+
+  comparar(a: Combo, b: Combo): number {
+    return b.itens.length - a.itens.length || pontosGalera(b) - pontosGalera(a) || maisBarato(a, b) || maisRapido(a, b)
+  }
+}

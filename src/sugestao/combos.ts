@@ -28,7 +28,14 @@ export function gerarCombos(cardapio: ItemCardapio[], naFila: number): Combo[] {
 }
 
 export function cabe(combo: Combo, restricoes: Restricoes): boolean {
-  return combo.preco <= restricoes.orcamento && combo.minutos <= restricoes.minutosDisponiveis
+  const pessoas = combo.pessoas ?? 1
+  return combo.preco <= restricoes.orcamento * pessoas && combo.minutos <= restricoes.minutosDisponiveis
+}
+
+export function escalarCombo(combo: Combo, pessoas = 1): Combo {
+  if (pessoas <= 1) return combo
+  const preco = (Math.round(combo.preco * 100) * pessoas) / 100
+  return { ...combo, preco, pessoas }
 }
 
 /** Combos que cabem no bolso e no tempo, na ordem da estratégia, sem repetir o prato principal. */
@@ -40,7 +47,7 @@ export function sugerirCombos(estrategia: EstrategiaSugestao, restricoes: Restri
     if (escolhidos.length === limite) break
     if (principais.has(combo.itens[0].id)) continue
     principais.add(combo.itens[0].id)
-    escolhidos.push(combo)
+    escolhidos.push(escalarCombo(combo, estrategia.pessoas))
   }
   return escolhidos
 }

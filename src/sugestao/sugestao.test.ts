@@ -3,7 +3,7 @@ import { buscarItem, todosItens } from '../dominio/cardapio'
 import type { ItemCardapio } from '../dominio/tipos'
 import { cabe, estimarMinutos, gerarCombos, montarCombo, sugerirCombos } from './combos'
 import type { Combo, EstrategiaSugestao } from './EstrategiaSugestao'
-import { Leve, MaisEmConta, MaisRapido, MataFome } from './estrategias'
+import { DividaComAmigos, Leve, MaisEmConta, MaisRapido, MataFome } from './estrategias'
 import { estrategiasSugestao } from '.'
 
 const item = (id: string) => buscarItem(id) as ItemCardapio
@@ -100,6 +100,14 @@ describe('estratégias', () => {
     const sugestoes = sugerir(new Leve())
     expect(sugestoes.length).toBeGreaterThan(0)
     expect(sugestoes.flatMap((c) => c.itens).every((i) => i.leve)).toBe(true)
+  })
+
+  it('Divida com amigos: combo triplo (3 pessoas) com coxinha, refrigerante e brownie em destaque', () => {
+    const sugestoes = sugerir(new DividaComAmigos())
+    expect(sugestoes).toHaveLength(3)
+    expect(sugestoes[0].pessoas).toBe(3)
+    expect(sugestoes[0].itens.map((i) => i.id)).toEqual(['coxinha-frango', 'refrigerante-lata', 'brownie-vo-carminha'])
+    expect(sugestoes[0].preco).toBe(82.5)
   })
 
   it('ids únicos no registro', () => {

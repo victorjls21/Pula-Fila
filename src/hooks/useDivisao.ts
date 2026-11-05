@@ -14,6 +14,7 @@ export type EscolhaPagamentoColega = {
 export type DivisaoHook = {
   ativa: boolean
   alternar: (ativa: boolean, nomePrincipal: string) => void
+  ativarParaGrupo: (quantidade: number, nomePrincipal: string) => void
   estrategias: EstrategiaDivisao[]
   estrategia: EstrategiaDivisao
   setEstrategiaId: (id: string) => void
@@ -65,6 +66,15 @@ export function useDivisao(): DivisaoHook {
     if (novaAtiva) setParticipantes((p) => [nomePrincipal || p[0], ...p.slice(1)])
   }
 
+  function ativarParaGrupo(quantidade: number, nomePrincipal: string) {
+    const total = Math.min(Math.max(2, quantidade), MAX_COLEGAS)
+    const lista = Array.from({ length: total }, (_, i) => (i === 0 ? nomePrincipal : `Colega ${i + 1}`))
+    setAtiva(true)
+    setIndicePagador(0)
+    setEscolhas({})
+    setParticipantes(lista)
+  }
+
   function adicionarColega() {
     if (participantes.length >= MAX_COLEGAS) return
     setParticipantes((p) => [...p, `Colega ${p.length + 1}`])
@@ -108,6 +118,7 @@ export function useDivisao(): DivisaoHook {
   return {
     ativa,
     alternar,
+    ativarParaGrupo,
     estrategias: estrategiasDivisao,
     estrategia,
     setEstrategiaId,
@@ -131,4 +142,3 @@ export function useDivisao(): DivisaoHook {
     resetar,
   }
 }
-

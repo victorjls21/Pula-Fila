@@ -22,11 +22,26 @@ export function useCombos(naFila: number): CombosHook {
   const [estrategiaId, setEstrategiaId] = useState(estrategiasSugestao[0].id)
   const estrategia = estrategiasSugestao.find((e) => e.id === estrategiaId) ?? estrategiasSugestao[0]
 
+  function escolherEstrategia(id: string) {
+    setEstrategiaId(id)
+    const nova = estrategiasSugestao.find((e) => e.id === id)
+    if ((nova?.pessoas ?? 1) > 1) setOrcamento(30)
+  }
+
   const candidatos = useMemo(() => gerarCombos(todosItens, naFila), [naFila])
   const sugestoes = useMemo(
     () => sugerirCombos(estrategia, { orcamento, minutosDisponiveis: minutos }, candidatos),
     [estrategia, orcamento, minutos, candidatos],
   )
 
-  return { orcamento, setOrcamento, minutos, setMinutos, estrategias: estrategiasSugestao, estrategia, setEstrategiaId, sugestoes }
+  return {
+    orcamento,
+    setOrcamento,
+    minutos,
+    setMinutos,
+    estrategias: estrategiasSugestao,
+    estrategia,
+    setEstrategiaId: escolherEstrategia,
+    sugestoes,
+  }
 }
